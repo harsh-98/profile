@@ -1,6 +1,20 @@
 <!DOCTYPE html>
 <html>
+<?php  
+$conn=new mysqli("127.0.0.1","harsh","12345678","myDB");
 
+
+if($conn->connect_error){
+  echo "<script>alert('Not connected');</script>";
+}
+    if(isset($_POST['user'])&&isset($_POST['comment'])){
+    $sql="insert into 
+    comment
+    (user_name,comment) values 
+    ('".$_POST['user']."' ,'".$_POST['comment']."');";
+$conn->query($sql);}
+
+?>
 <head>
   <meta charset="utf-8">
   <title>HARSH JAIN</title>
@@ -493,7 +507,40 @@
     }
 
         /* end--------scroll_changes    */
-
+        /*  comment */
+        #comment_id{
+          margin:auto;
+          position:fixed;
+          display:none;
+          z-index:20;
+          width:100%;
+          height:100%;
+          background-color:rgba(211,211,211,0.5);
+        }
+        #com_btn{
+          font:italic bold 10px sans-serif;
+            margin-top:2vh;
+          margin:auto;
+          display:block;
+        }
+        h3{
+          display:inline-block;
+          margin: .5vh 1vw .5vh 1vw;
+          font-style:italic;
+        }
+        h3 +p {
+          display:inline-block;
+        }
+        form{
+          position:absolute;
+          top:12vh;
+          left:14%;
+            background-color: rgb(42,42,42);
+          width:72%;
+          height:67.5vh;
+          padding:10vh;
+          box-sizing:border-box;
+        }
   </style>
 
 
@@ -503,10 +550,7 @@
 
   <div id="nav">
     <div style="float:left;"> <img id="img1" src="img2.JPG" alt="" /></div>
-    <div id="harsh">
-
-
-      HARSH JAIN</div>
+    <div id="harsh"> HARSH JAIN </div>
       <table id="table_nav">
         <tbody>
           <tr>
@@ -517,7 +561,7 @@
             </td>
             <td><button id="button3" onclick="but3()">PROJECTS</button>
             </td>
-            <td><button id="button4" onclick="but4() ">REGISTER</button>
+            <td><button id="button4" onclick="but4() ">COMMENT</button>
             </td>
             <td><button id="button5" onclick="but5() ">CONTACT</button>
             </td>
@@ -531,6 +575,17 @@
     <div style="height:8.5vh;">
     </div>
     <div id="main_box">
+
+    <div id="comment_id">
+      <div style="position: absolute;right:10px; width:2vh;font: bold 5vh sans-serif;" onclick="comment_box_close()">X</div><!-- float is not working -->
+      <form action="index.php" method="post">
+       YOUR NAME  <input type="text" name="user"> <br><br>
+        COMMENT &nbsp;&nbsp;<input type="text" name="comment"><br>
+        <br>
+        <input type="submit" name="" value="SUBMIT">
+      </form>
+
+    </div>
       <ul id="u_l">
         <li>
           <div id="above_1">
@@ -640,7 +695,29 @@
               </div>
             </li>
              <li>
-              <div id="div4"></div>
+              <div id="div4" style="overflow:scroll">
+                <button onclick="comment_box();" id="com_btn">ADD COMMENT!!</button>
+              <div id="main_com">
+              <?php      
+              $sql="select * from comment;";
+               $result= $conn->query($sql);
+
+                if($result->num_rows>0){
+                  while($rows=$result->fetch_assoc()){
+                      echo "<div id='block_com'>
+                  <h3 >".$rows['id']." ).  &nbsp;&nbsp;&nbsp;&nbsp;".strtoupper($rows['user_name'])." &nbsp;-  -  &nbsp; </h3>
+                    <p>".$rows['comment']."</p>
+
+                </div>";
+                  }
+                }?>
+                
+
+
+
+              </div>
+
+              </div>
              </li>
             <li>
            
@@ -680,6 +757,16 @@
         }
         function but5(){
           $('ul').removeClass('d b c a').addClass('e'); $('#div5').addClass('re_size'); $('#div4 ,#div2, #div3 ,#div1').removeClass('re_size tab');
+
+
+        }
+        function comment_box(){
+            document.getElementById("comment_id").style.display="block";
+
+
+        }
+        function comment_box_close(){
+            document.getElementById("comment_id").style.display="none";
 
 
         }
@@ -731,7 +818,7 @@
 
 
               break;
-              case "register":
+              case "comment":
               but4();
 
               break;
@@ -765,7 +852,7 @@ var call_count=1 ,call_count2=1;
 
          });
           $("#button4").click(function(){
-           history.pushState(null, null,"#register");
+           history.pushState(null, null,"#comment");
                       
 
          });
@@ -782,7 +869,7 @@ var call_count=1 ,call_count2=1;
 
 
       </script>
-
+        <?php  $conn->close(); ?>
     </body>
 
     </html>
